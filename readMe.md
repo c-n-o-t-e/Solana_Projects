@@ -23,3 +23,17 @@ anchor build
 ```sh
 anchor test
 ```
+
+5. Deploy locally:
+
+To deploy the project locally, first run the Solana test validator:
+
+```sh
+solana-test-validator
+```
+
+Then deploy the project:
+
+```sh
+anchor deploy --provider.cluster localnet
+```
