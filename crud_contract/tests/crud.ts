@@ -11,7 +11,7 @@ let crudAccount: anchor.web3.Keypair;
 const IDL = require("../target/idl/crud.json");
 const crudAddress = new PublicKey("5UmsxDzMv1k5wGocBfLes6pGZ6iw2R5bmFqGHpJad1NX")
 
-describe("anchor", async () => {
+describe("Crud", async () => {
   before(async () => {
     provider = anchor.AnchorProvider.env();
     anchor.setProvider(provider);
