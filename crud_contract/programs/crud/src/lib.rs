@@ -21,93 +21,94 @@ pub mod crud {
         journal_entry.message = message;
         Ok(())
     }
-}
-
-pub fn update_journal_entry(
-    ctx: Context<UpdateEntry>,
-    title: String,
-    message: String,
-) -> Result<()> {
-    msg!("Journal Entry Updated");
-    msg!("Title: {}", title);
-    msg!("Message: {}", message);
-
-    let journal_entry = &mut ctx.accounts.journal_entry;
-    journal_entry.message = message;
-
-    Ok(())
-}
-
-pub fn delete_journal_entry(_ctx: Context<DeleteEntry>, title: String) -> Result<()> {
-    msg!("Journal entry titled {} deleted", title);
-    Ok(())
-}
 
 
-#[derive(Accounts)]
-#[instruction(title: String, message: String)] //test
-pub struct CreateEntry<'info> {
-    #[account(
-        init,
-        seeds = [title.as_bytes(), owner.key().as_ref()], 
-        bump, 
-        payer = owner, 
-        space = 8 + JournalEntryState::INIT_SPACE
-    )]
-    pub journal_entry: Account<'info, JournalEntryState>,
+    pub fn update_journal_entry(
+        ctx: Context<UpdateEntry>,
+        title: String,
+        message: String,
+    ) -> Result<()> {
+        msg!("Journal Entry Updated");
+        msg!("Title: {}", title);
+        msg!("Message: {}", message);
 
-    #[account(mut)]
-    pub owner: Signer<'info>,
+        let journal_entry = &mut ctx.accounts.journal_entry;
+        journal_entry.message = message;
 
-    pub system_program: Program<'info, System>,
-}
+        Ok(())
+    }
 
-// realloc is used to increase or decrease the lamports and space of an account 
+    pub fn delete_journal_entry(_ctx: Context<DeleteEntry>, title: String) -> Result<()> {
+        msg!("Journal entry titled {} deleted", title);
+        Ok(())
+    }
 
-#[derive(Accounts)]
-#[instruction(title: String, message: String)]
-pub struct UpdateEntry<'info> {
-    #[account(
-        mut,
-        seeds = [title.as_bytes(), owner.key().as_ref()], 
-        bump, 
-        realloc = 8 + JournalEntryState::INIT_SPACE,
-        realloc::payer = owner, 
-        realloc::zero = true, // reset the account to zero and recalculate the space
-    )]
-    pub journal_entry: Account<'info, JournalEntryState>,
 
-    #[account(mut)]
-    pub owner: Signer<'info>,
+    #[derive(Accounts)]
+    #[instruction(title: String, message: String)] //test
+    pub struct CreateEntry<'info> {
+        #[account(
+            init,
+            seeds = [title.as_bytes(), owner.key().as_ref()], 
+            bump, 
+            payer = owner, 
+            space = 8 + JournalEntryState::INIT_SPACE
+        )]
+        pub journal_entry: Account<'info, JournalEntryState>,
 
-    pub system_program: Program<'info, System>,
-}
+        #[account(mut)]
+        pub owner: Signer<'info>,
 
-#[account]
-#[derive(InitSpace)]
-pub struct JournalEntryState {
-    pub owner: Pubkey,
+        pub system_program: Program<'info, System>,
+    }
 
-    #[max_len(64)]
-    pub title: String,
+    // realloc is used to increase or decrease the lamports and space of an account 
 
-    #[max_len(1000)]
-    pub message: String,
-}
+    #[derive(Accounts)]
+    #[instruction(title: String, message: String)]
+    pub struct UpdateEntry<'info> {
+        #[account(
+            mut,
+            seeds = [title.as_bytes(), owner.key().as_ref()], 
+            bump, 
+            realloc = 8 + JournalEntryState::INIT_SPACE,
+            realloc::payer = owner, 
+            realloc::zero = true, // reset the account to zero and recalculate the space
+        )]
+        pub journal_entry: Account<'info, JournalEntryState>,
 
-#[derive(Accounts)]
-#[instruction(title: String)]
-pub struct DeleteEntry<'info> {
-    #[account( 
-        mut, 
-        seeds = [title.as_bytes(), owner.key().as_ref()], 
-        bump, 
-        close = owner, // close the account
-    )]
-    pub journal_entry: Account<'info, JournalEntryState>,
+        #[account(mut)]
+        pub owner: Signer<'info>,
 
-    #[account(mut)]
-    pub owner: Signer<'info>,
+        pub system_program: Program<'info, System>,
+    }
 
-    pub system_program: Program<'info, System>,
+    #[account]
+    #[derive(InitSpace)]
+    pub struct JournalEntryState {
+        pub owner: Pubkey,
+
+        #[max_len(64)]
+        pub title: String,
+
+        #[max_len(1000)]
+        pub message: String,
+    }
+
+    #[derive(Accounts)]
+    #[instruction(title: String)]
+    pub struct DeleteEntry<'info> {
+        #[account( 
+            mut, 
+            seeds = [title.as_bytes(), owner.key().as_ref()], 
+            bump, 
+            close = owner, // close the account
+        )]
+        pub journal_entry: Account<'info, JournalEntryState>,
+
+        #[account(mut)]
+        pub owner: Signer<'info>,
+
+        pub system_program: Program<'info, System>,
+    }
 }
