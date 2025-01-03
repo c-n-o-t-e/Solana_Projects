@@ -6,6 +6,24 @@ use anchor_spl::{
 
 declare_id!("CueaL9tbW9egY5Rcwzp4FvnBKaz4HcwCGxvxMxridcca");
 
+#[program]
+pub mod testing_transfers {
+    use super::*;
+
+    pub fn transfer(ctx: Context<Transfer1>, amount: u64) -> Result<()> {
+        // msg!("Greetings from: {:?}", ctx.program_id);
+        transfer_tokens(
+            &ctx.accounts.user1_token_account_a,
+            &ctx.accounts.user2_token_account_a,
+            &amount,
+            &ctx.accounts.token_mint_a,
+            &ctx.accounts.user1,
+            &ctx.accounts.token_program,
+        )?;
+        Ok(())
+    }
+}
+
 #[derive(Accounts)]
 pub struct Transfer1<'info> {
     #[account(mut)]
