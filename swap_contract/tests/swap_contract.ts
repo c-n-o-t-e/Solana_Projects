@@ -101,7 +101,6 @@ describe("swap_contract", () => {
 
       // Save the accounts for later use
       accounts.maker = alice.publicKey;
-      accounts.gbgb = payer.publicKey;
       accounts.taker = bob.publicKey;
       accounts.tokenMintA = tokenMintA.publicKey;
       accounts.makerTokenAccountA = aliceTokenAccountA;
