@@ -103,6 +103,26 @@ describe("transfers", () => {
     }
   );
 
-  
+  it("Should transfer from Alice to Bob", async () => {
+    const vaultBalanceResponse = await connection.getTokenAccountBalance(accounts.user1TokenAccountA);
+    console.log(vaultBalanceResponse.value.amount);
+
+    const transactionSignature = await program.methods
+      .transfer(amountToTransfer)
+      .accounts({
+        ...accounts
+      })
+      .signers([alice])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
+
+    const vaultBalanceResponse3 = await connection.getTokenAccountBalance(aliceTokenAccountA);
+    console.log(vaultBalanceResponse3.value.amount, 'i');
+
+    const vaultBalanceResponse4 = await connection.getTokenAccountBalance(bobTokenAccountA);
+    console.log(vaultBalanceResponse4.value.amount,'ii');
+
+  })
 
 });
