@@ -103,7 +103,7 @@ describe("transfers", () => {
     }
   );
 
-  it("Should transfer from Alice to Bob", async () => {
+  it("Should transfer tokens", async () => {
     const vaultBalanceResponse = await connection.getTokenAccountBalance(accounts.user1TokenAccountA);
     console.log(vaultBalanceResponse.value.amount);
 
