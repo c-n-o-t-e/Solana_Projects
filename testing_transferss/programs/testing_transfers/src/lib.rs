@@ -10,7 +10,7 @@ declare_id!("CueaL9tbW9egY5Rcwzp4FvnBKaz4HcwCGxvxMxridcca");
 pub mod testing_transfers {
     use super::*;
 
-    pub fn transfer(ctx: Context<Transfer1>, amount: u64) -> Result<()> {
+    pub fn transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
         // msg!("Greetings from: {:?}", ctx.program_id);
         transfer_tokens(
             &ctx.accounts.user1_token_account_a,
@@ -25,7 +25,7 @@ pub mod testing_transfers {
 }
 
 #[derive(Accounts)]
-pub struct Transfer1<'info> {
+pub struct Transfer<'info> {
     #[account(mut)]
     pub user1: Signer<'info>,
 
