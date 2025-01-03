@@ -107,6 +107,7 @@ describe("transfers", () => {
     const vaultBalanceResponse = await connection.getTokenAccountBalance(accounts.user1TokenAccountA);
     console.log(vaultBalanceResponse.value.amount);
 
+    // Transfer from Alice to Bob
     const transactionSignature = await program.methods
       .transfer(amountToTransfer)
       .accounts({
@@ -121,8 +122,29 @@ describe("transfers", () => {
     console.log(vaultBalanceResponse3.value.amount, 'i');
 
     const vaultBalanceResponse4 = await connection.getTokenAccountBalance(bobTokenAccountA);
-    console.log(vaultBalanceResponse4.value.amount,'ii');
+    console.log(vaultBalanceResponse4.value.amount, 'ii');
 
+    accounts.user1 = bob.publicKey;
+    accounts.user2 = alice.publicKey;
+    accounts.user1TokenAccountA = bobTokenAccountA;
+    accounts.user2TokenAccountA = aliceTokenAccountA;
+
+    // Transfer from Bob to Alice
+    const transactionSignature2 = await program.methods
+      .transfer(amountToTransfer)
+      .accounts({
+        ...accounts
+      })
+      .signers([bob])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature2);
+
+    const vaultBalanceResponse5 = await connection.getTokenAccountBalance(aliceTokenAccountA);
+    console.log(vaultBalanceResponse5.value.amount,'i');
+
+    const vaultBalanceResponse6 = await connection.getTokenAccountBalance(bobTokenAccountA);
+    console.log(vaultBalanceResponse6.value.amount,'ii');
   })
 
 });
