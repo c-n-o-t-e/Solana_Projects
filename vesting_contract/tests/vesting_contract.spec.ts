@@ -143,4 +143,30 @@ describe("VestingContract Smart Contract Tests", () => {
     console.log("Create Employee Account Transaction Signature:", tx2);
     console.log("Employee account", employeeAccount.toBase58());
   });
+
+  it("should claim tokens", async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const currentClock = await banksClient.getClock();
+    context.setClock(
+      new Clock(
+        currentClock.slot,
+        currentClock.epochStartTimestamp,
+        currentClock.epoch,
+        currentClock.leaderScheduleEpoch,
+        1000n
+      )
+    );
+
+    console.log("Employee account", employeeAccount.toBase58());
+
+    const tx3 = await program2.methods
+      .claimTokens(companyName)
+      .accounts({
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .rpc({ commitment: "confirmed" });
+
+    console.log("Claim Tokens transaction signature", tx3);
+  });
 });
