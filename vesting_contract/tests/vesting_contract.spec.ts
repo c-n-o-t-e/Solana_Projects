@@ -115,4 +115,19 @@ describe("VestingContract Smart Contract Tests", () => {
 
     console.log("Create VestingContract Account Transaction Signature:", tx);
   });
+
+  it("should fund the treasury token account", async () => {
+    const amount = 10_000 * 10 ** 9;
+    const mintTx = await mintTo(
+      // @ts-ignores
+      banksClient,
+      employer,
+      mint,
+      treasuryTokenAccount,
+      employer,
+      amount
+    );
+
+    console.log("Mint to Treasury Transaction Signature:", mintTx);
+  });
 });
