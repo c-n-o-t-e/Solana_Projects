@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_interface::{self, Mint, TokenAccount, TokenInterface, TransferChecked};
 
-declare_id!("GFdLg11UBR8ZeePW43ZyD1gY4z4UQ96LPa22YBgnn4z8");
+declare_id!("72pLcRtReyfEKLXD6pXGdCt5yXR6X6Zz3GLxKzM9G98m");
 #[program]
 pub mod vesting_contract {
     use super::*;
