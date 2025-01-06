@@ -117,10 +117,31 @@ describe("Transfer Tests", () => {
     await program.methods
       .transfer(amountToTransfer)
       .accounts({
-        ...accounts,
+        user1: alice.publicKey,
+        user2: bob.publicKey,
+        tokenMintA: mint,
+        user1TokenAccount: aliceAssociatedTokenAccount,
+        user2TokenAccountA: bobAssociatedTokenAccount,
+        tokenProgram: TOKEN_PROGRAM_ID,
       })
       .signers([alice])
       .rpc();
+    
+    /*
+      .accounts({
+        ...accounts
+      })
+      can be used rather than
+      
+      .accounts({
+        user1: alice.publicKey,
+        user2: bob.publicKey,
+        tokenMintA: mint,
+        user1TokenAccount: aliceAssociatedTokenAccount,
+        user2TokenAccountA: bobAssociatedTokenAccount,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+    */
 
     const tokenAccountInfo3 = await getAccount(banksClient, accounts.user1TokenAccountA);
     console.log(tokenAccountInfo3.amount);
