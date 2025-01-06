@@ -14,6 +14,7 @@ import { makeKeypairs } from "@solana-developers/helpers";
 import { TestingTransfers } from "../target/types/testing_transfers";
 import { SYSTEM_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/native/system";
 import { createMint, mintTo, createAssociatedTokenAccount, getAccount } from "spl-token-bankrun";
+import { assert, expect } from "chai";
 
 const TOKEN_PROGRAM: typeof TOKEN_PROGRAM_ID = TOKEN_PROGRAM_ID;
 
@@ -108,10 +109,10 @@ describe("Transfer Tests", () => {
     const amountToTransfer = new BN(100);
 
     const tokenAccountInfo = await getAccount(banksClient, accounts.user1TokenAccountA);
-    console.log(tokenAccountInfo.amount);
+    expect(tokenAccountInfo.amount).to.equal(1000n);
 
     const tokenAccountInfo2 = await getAccount(banksClient, accounts.user2TokenAccountA);
-    console.log(tokenAccountInfo2.amount);
+    expect(tokenAccountInfo2.amount).to.equal(1000n);
 
     // Transfer from Alice to Bob
     await program.methods
@@ -144,10 +145,10 @@ describe("Transfer Tests", () => {
     */
 
     const tokenAccountInfo3 = await getAccount(banksClient, accounts.user1TokenAccountA);
-    console.log(tokenAccountInfo3.amount);
+    expect(tokenAccountInfo3.amount).to.equal(900n);
 
     const tokenAccountInfo4 = await getAccount(banksClient, accounts.user2TokenAccountA);
-    console.log(tokenAccountInfo4.amount);
+    expect(tokenAccountInfo4.amount).to.equal(1100n);
 
     accounts.user1 = bob.publicKey;
     accounts.user2 = alice.publicKey;
@@ -164,9 +165,9 @@ describe("Transfer Tests", () => {
       .rpc();
 
     const tokenAccountInfo5 = await getAccount(banksClient, accounts.user2TokenAccountA);
-    console.log(tokenAccountInfo5.amount);
+    expect(tokenAccountInfo5.amount).to.equal(1000n);
 
     const tokenAccountInfo6 = await getAccount(banksClient, accounts.user1TokenAccountA);
-    console.log(tokenAccountInfo6.amount);
+    expect(tokenAccountInfo6.amount).to.equal(1000n);
   })
 })
