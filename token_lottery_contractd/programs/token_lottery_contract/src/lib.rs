@@ -243,6 +243,44 @@ pub mod token_lottery {
 
         Ok(())
     }
+
+    pub fn commit_a_winner(ctx: Context<CommitWinner>) -> Result<()> {
+        let clock = Clock::get()?;
+        let token_lottery = &mut ctx.accounts.token_lottery;
+        if ctx.accounts.payer.key() != token_lottery.authority {
+            return Err(ErrorCode::NotAuthorized.into());
+        }
+
+        let randomness_data =
+            RandomnessAccountData::parse(ctx.accounts.randomness_account_data.data.borrow())
+                .unwrap();
+
+        if randomness_data.seed_slot != clock.slot - 1 {
+            return Err(ErrorCode::RandomnessAlreadyRevealed.into());
+        }
+
+        token_lottery.randomness_account = ctx.accounts.randomness_account_data.key();
+
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct CommitWinner<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [b"token_lottery".as_ref()],
+        bump = token_lottery.bump,
+    )]
+    pub token_lottery: Account<'info, TokenLottery>,
+
+    /// CHECK: The account's data is validated manually within the handler.
+    pub randomness_account_data: UncheckedAccount<'info>,
+
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
@@ -388,6 +426,22 @@ pub struct InitializeLottery<'info> {
     pub system_program: Program<'info, System>,
     pub token_metadata_program: Program<'info, Metadata>,
     pub rent: Sysvar<'info, Rent>,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct TokenLottery {
+    pub bump: u8,
+    pub winner: u64,
+    pub winner_chosen: bool,
+    pub lottery_start: u64,
+    pub lottery_end: u64,
+    // Is it good practice to store SOL on an account used for something else?
+    pub lottery_pot_amount: u64,
+    pub ticket_num: u64,
+    pub price: u64,
+    pub randomness_account: Pubkey,
+    pub authority: Pubkey,
 }
 
 #[error_code]
