@@ -23,7 +23,7 @@ pub const URI: &str = "Token Lottery";
 pub const SYMBOL: &str = "TICKET";
 
 #[program]
-pub mod token_lottery {
+pub mod token_lottery_contract {
 
     use super::*;
 
