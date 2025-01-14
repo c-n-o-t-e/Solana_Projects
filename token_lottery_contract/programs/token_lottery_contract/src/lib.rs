@@ -11,14 +11,14 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{mint_to, Mint, MintTo, TokenAccount, TokenInterface},
 };
-use switchboard_on_demand::accounts::RandomnessAccountData;
+// use switchboard_on_demand::accounts::RandomnessAccountData;
 
-declare_id!("BTM3kQXxzRyAkB1m1N78r1g9x886y5h69BeDLaFDxeCn");
+declare_id!("C3H5nkrYaxXT7UNF2h9CnazbzufZXGyUnHC9iFU2z7VV");
 
 #[constant]
 pub const NAME: &str = "Token Lottery Ticket #";
 #[constant]
-pub const URI: &str = "Token Lottery";
+pub const URI: &str = "https://raw.githubusercontent.com/c-n-o-t-e/Solana_Projects/refs/heads/master/token_lottery_contract/metadata.json";
 #[constant]
 pub const SYMBOL: &str = "TICKET";
 
@@ -244,113 +244,113 @@ pub mod token_lottery_contract {
         Ok(())
     }
 
-    pub fn commit_a_winner(ctx: Context<CommitWinner>) -> Result<()> {
-        let clock = Clock::get()?;
-        let token_lottery = &mut ctx.accounts.token_lottery;
-        if ctx.accounts.payer.key() != token_lottery.authority {
-            return Err(ErrorCode::NotAuthorized.into());
-        }
+    // pub fn commit_a_winner(ctx: Context<CommitWinner>) -> Result<()> {
+    //     let clock = Clock::get()?;
+    //     let token_lottery = &mut ctx.accounts.token_lottery;
+    //     if ctx.accounts.payer.key() != token_lottery.authority {
+    //         return Err(ErrorCode::NotAuthorized.into());
+    //     }
 
-        let randomness_data =
-            RandomnessAccountData::parse(ctx.accounts.randomness_account_data.data.borrow())
-                .unwrap();
+    //     let randomness_data =
+    //         RandomnessAccountData::parse(ctx.accounts.randomness_account_data.data.borrow())
+    //             .unwrap();
 
-        if randomness_data.seed_slot != clock.slot - 1 {
-            return Err(ErrorCode::RandomnessAlreadyRevealed.into());
-        }
+    //     if randomness_data.seed_slot != clock.slot - 1 {
+    //         return Err(ErrorCode::RandomnessAlreadyRevealed.into());
+    //     }
 
-        token_lottery.randomness_account = ctx.accounts.randomness_account_data.key();
+    //     token_lottery.randomness_account = ctx.accounts.randomness_account_data.key();
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 
-    pub fn choose_a_winner(ctx: Context<ChooseWinner>) -> Result<()> {
-        let clock = Clock::get()?;
-        let token_lottery = &mut ctx.accounts.token_lottery;
+    // pub fn choose_a_winner(ctx: Context<ChooseWinner>) -> Result<()> {
+    //     let clock = Clock::get()?;
+    //     let token_lottery = &mut ctx.accounts.token_lottery;
 
-        if ctx.accounts.randomness_account_data.key() != token_lottery.randomness_account {
-            return Err(ErrorCode::IncorrectRandomnessAccount.into());
-        }
-        if ctx.accounts.payer.key() != token_lottery.authority {
-            return Err(ErrorCode::NotAuthorized.into());
-        }
-        if clock.slot < token_lottery.lottery_end {
-            msg!("Current slot: {}", clock.slot);
-            msg!("End slot: {}", token_lottery.lottery_end);
-            return Err(ErrorCode::LotteryNotCompleted.into());
-        }
-        require!(
-            token_lottery.winner_chosen == false,
-            ErrorCode::WinnerChosen
-        );
+    //     if ctx.accounts.randomness_account_data.key() != token_lottery.randomness_account {
+    //         return Err(ErrorCode::IncorrectRandomnessAccount.into());
+    //     }
+    //     if ctx.accounts.payer.key() != token_lottery.authority {
+    //         return Err(ErrorCode::NotAuthorized.into());
+    //     }
+    //     if clock.slot < token_lottery.lottery_end {
+    //         msg!("Current slot: {}", clock.slot);
+    //         msg!("End slot: {}", token_lottery.lottery_end);
+    //         return Err(ErrorCode::LotteryNotCompleted.into());
+    //     }
+    //     require!(
+    //         token_lottery.winner_chosen == false,
+    //         ErrorCode::WinnerChosen
+    //     );
 
-        let randomness_data =
-            RandomnessAccountData::parse(ctx.accounts.randomness_account_data.data.borrow())
-                .unwrap();
-        let revealed_random_value = randomness_data
-            .get_value(&clock)
-            .map_err(|_| ErrorCode::RandomnessNotResolved)?;
+    //     let randomness_data =
+    //         RandomnessAccountData::parse(ctx.accounts.randomness_account_data.data.borrow())
+    //             .unwrap();
+    //     let revealed_random_value = randomness_data
+    //         .get_value(&clock)
+    //         .map_err(|_| ErrorCode::RandomnessNotResolved)?;
 
-        msg!("Randomness result: {}", revealed_random_value[0]);
-        msg!("Ticket num: {}", token_lottery.ticket_num);
+    //     msg!("Randomness result: {}", revealed_random_value[0]);
+    //     msg!("Ticket num: {}", token_lottery.ticket_num);
 
-        let randomness_result = revealed_random_value[0] as u64 % token_lottery.ticket_num;
+    //     let randomness_result = revealed_random_value[0] as u64 % token_lottery.ticket_num;
 
-        msg!("Winner: {}", randomness_result);
+    //     msg!("Winner: {}", randomness_result);
 
-        token_lottery.winner = randomness_result;
-        token_lottery.winner_chosen = true;
+    //     token_lottery.winner = randomness_result;
+    //     token_lottery.winner_chosen = true;
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 
-    pub fn claim_prize(ctx: Context<ClaimPrize>) -> Result<()> {
-        // Check if winner has been chosen
-        msg!(
-            "Winner chosen: {}",
-            ctx.accounts.token_lottery.winner_chosen
-        );
-        require!(
-            ctx.accounts.token_lottery.winner_chosen,
-            ErrorCode::WinnerNotChosen
-        );
+    // pub fn claim_prize(ctx: Context<ClaimPrize>) -> Result<()> {
+    // Check if winner has been chosen
+    //     msg!(
+    //         "Winner chosen: {}",
+    //         ctx.accounts.token_lottery.winner_chosen
+    //     );
+    //     require!(
+    //         ctx.accounts.token_lottery.winner_chosen,
+    //         ErrorCode::WinnerNotChosen
+    //     );
 
-        // Check if token is a part of the collection
-        require!(
-            ctx.accounts.metadata.collection.as_ref().unwrap().verified,
-            ErrorCode::NotVerifiedTicket
-        );
-        require!(
-            ctx.accounts.metadata.collection.as_ref().unwrap().key
-                == ctx.accounts.collection_mint.key(),
-            ErrorCode::IncorrectTicket
-        );
+    //     // Check if token is a part of the collection
+    //     require!(
+    //         ctx.accounts.metadata.collection.as_ref().unwrap().verified,
+    //         ErrorCode::NotVerifiedTicket
+    //     );
+    //     require!(
+    //         ctx.accounts.metadata.collection.as_ref().unwrap().key
+    //             == ctx.accounts.collection_mint.key(),
+    //         ErrorCode::IncorrectTicket
+    //     );
 
-        let ticket_name = NAME.to_owned() + &ctx.accounts.token_lottery.winner.to_string();
-        let metadata_name = ctx.accounts.metadata.name.replace("\u{0}", "");
+    //     let ticket_name = NAME.to_owned() + &ctx.accounts.token_lottery.winner.to_string();
+    //     let metadata_name = ctx.accounts.metadata.name.replace("\u{0}", "");
 
-        msg!("Ticket name: {}", ticket_name);
-        msg!("Metdata name: {}", metadata_name);
+    //     msg!("Ticket name: {}", ticket_name);
+    //     msg!("Metdata name: {}", metadata_name);
 
-        // Check if the winner has the winning ticket
-        require!(metadata_name == ticket_name, ErrorCode::IncorrectTicket);
-        require!(
-            ctx.accounts.destination.amount > 0,
-            ErrorCode::IncorrectTicket
-        );
+    //     // Check if the winner has the winning ticket
+    //     require!(metadata_name == ticket_name, ErrorCode::IncorrectTicket);
+    //     require!(
+    //         ctx.accounts.destination.amount > 0,
+    //         ErrorCode::IncorrectTicket
+    //     );
 
-        **ctx
-            .accounts
-            .token_lottery
-            .to_account_info()
-            .try_borrow_mut_lamports()? -= ctx.accounts.token_lottery.lottery_pot_amount;
-        **ctx.accounts.payer.try_borrow_mut_lamports()? +=
-            ctx.accounts.token_lottery.lottery_pot_amount;
+    //     **ctx
+    //         .accounts
+    //         .token_lottery
+    //         .to_account_info()
+    //         .try_borrow_mut_lamports()? -= ctx.accounts.token_lottery.lottery_pot_amount;
+    //     **ctx.accounts.payer.try_borrow_mut_lamports()? +=
+    //         ctx.accounts.token_lottery.lottery_pot_amount;
 
-        ctx.accounts.token_lottery.lottery_pot_amount = 0;
+    //     ctx.accounts.token_lottery.lottery_pot_amount = 0;
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 }
 
 #[derive(Accounts)]
