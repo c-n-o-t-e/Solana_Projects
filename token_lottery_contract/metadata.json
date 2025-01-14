@@ -1,0 +1,6 @@
+{
+ "name": "A Test Token",
+ "symbol": "TEST",
+ "description": "Fully for testing purposes only",
+ "image": "https://token-creatoe-lac.vercel.app/token_image.png"
+}
